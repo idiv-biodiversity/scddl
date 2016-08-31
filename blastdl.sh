@@ -21,7 +21,7 @@ function update_metadata_file {
       BLAST_DB_METADATA_FILE=$BLAST_DB_DATASET.nal
       ;;
     *)
-      echo '[blastdl] unknown database' >&2
+      echo "[blastdl] [$(date)] unknown database" >&2
       return 1
       ;;
   esac
@@ -31,29 +31,29 @@ function update_metadata_file {
 }
 
 # download all md5s first, then download all tarballs
-echo '[blastdl] starting download ...'
+echo "[blastdl] [$(date)] starting download ..." >&2
 cat << EOF | lftp ftp://ftp.ncbi.nlm.nih.gov
 set net:socket-buffer 33554432
 mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz\.md5$" /blast/db $BLAST_DB_DIR/dl
 mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz$"      /blast/db $BLAST_DB_DIR/dl
 EOF
-echo '[blastdl] done'
+echo "[blastdl] [$(date)] done" >&2
 
 pushd $BLAST_DB_DIR/dl &> /dev/null
 
 BLAST_DB_DATE=$(date +%F)
 
-echo '[blastdl] checking md5 ...' &&
+echo "[blastdl] [$(date)] checking md5 ..." >&2 &&
 md5sum -c *.md5 &&
-echo '[blastdl] done, extracting ...' &&
+echo "[blastdl] [$(date)] done, extracting ..." >&2 &&
 for i in $BLAST_DB_DATASET.*.tar.gz ; do
   tar xzfo $i || exit 1
 done &&
-echo '[blastdl] done, tagging with date and moving ...' &&
+echo "[blastdl] [$(date)] done, tagging with date and moving ..." >&2 &&
 update_metadata_file &&
 for i in $BLAST_DB_DATASET.* ; do
   mv -n $i $BLAST_DB_DIR/${i/$BLAST_DB_DATASET/$BLAST_DB_DATASET-$BLAST_DB_DATE} || exit 1
 done &&
-echo '[blastdl] now YOU need to remove access right for krausec!'
+echo "[blastdl] [$(date)] now YOU need to remove access right for krausec!" >&2
 
 popd &> /dev/null
