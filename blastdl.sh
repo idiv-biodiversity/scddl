@@ -10,6 +10,25 @@ BLAST_DB_DATASET=$1
   exit 1
 }
 
+function update_metadata_file {
+  case $BLAST_DB_DATASET in
+    nr)
+      BLAST_DB_METADATA_FILE=$BLAST_DB_DATASET.pal
+      ;;
+
+    nt)
+      BLAST_DB_METADATA_FILE=$BLAST_DB_DATASET.nal
+      ;;
+    *)
+      echo '[blastdl] unknown database' >&2
+      return 1
+      ;;
+  esac
+
+  sed -e "s/$BLAST_DB_DATASET/$BLAST_DB_DATASET-$BLAST_DB_DATE/g" \
+      -i $BLAST_DB_METADATA_FILE
+}
+
 # download all md5s first, then download all tarballs
 echo '[blastdl] starting download ...'
 cat << EOF | lftp ftp://ftp.ncbi.nlm.nih.gov
@@ -30,7 +49,7 @@ for i in $BLAST_DB_DATASET.*.tar.gz ; do
   tar xzfo $i || exit 1
 done &&
 echo '[blastdl] done, tagging with date and moving ...' &&
-sed -i "s/$BLAST_DB_DATASET/$BLAST_DB_DATASET-$BLAST_DB_DATE/g" $BLAST_DB_DATASET.pal &&
+update_metadata_file &&
 for i in $BLAST_DB_DATASET.* ; do
   mv -n $i $BLAST_DB_DIR/${i/$BLAST_DB_DATASET/$BLAST_DB_DATASET-$BLAST_DB_DATE} || exit 1
 done &&
