@@ -19,7 +19,7 @@ mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz$"      /blast/db $BLAST_D
 EOF
 echo '[blastdl] done'
 
-pushd /data/db/blast/dl
+pushd $BLAST_DB_DIR/dl &> /dev/null
 
 BLAST_DB_DATE=$(date +%F)
 
@@ -36,4 +36,4 @@ for i in $BLAST_DB_DATASET.* ; do
 done &&
 echo '[blastdl] now YOU need to remove access right for krausec!'
 
-popd
+popd &> /dev/null
