@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # TODO replace echo with `logger -t $(dirname $0) message`
+# TODO clean up if not successful
 
 BLAST_DB_DIR=/data/db/blast
 
