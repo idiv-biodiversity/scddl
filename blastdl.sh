@@ -1,15 +1,33 @@
 #!/bin/bash
 
 # TODO replace echo with `logger -t $(dirname $0) message`
-# TODO clean up if not successful
 
-BLAST_DB_DIR=/data/db/blast
+# ------------------------------------------------------------------------------
+# configuration, arguments
+# ------------------------------------------------------------------------------
+
+function usage {
+  echo "usage: $(dirname $0) dbname dir"
+}
 
 BLAST_DB_DATASET=$1
 [[ -n $BLAST_DB_DATASET ]] || {
-  echo "usage: $(dirname $0) db" >&2
+  usage >&2
   exit 1
 }
+
+BLAST_DB_DIR=$2
+[[ -d $BLAST_DB_DIR ]] || {
+  usage >&2
+  exit 1
+}
+
+BLAST_DB_DL_DIR=$(mktemp -d)
+trap 'rm -rf $BLAST_DB_DL_DIR' EXIT INT TERM
+
+# ------------------------------------------------------------------------------
+# application functions
+# ------------------------------------------------------------------------------
 
 function update_metadata_file {
   case $BLAST_DB_DATASET in
@@ -30,16 +48,20 @@ function update_metadata_file {
       -i $BLAST_DB_METADATA_FILE
 }
 
+# ------------------------------------------------------------------------------
+# application
+# ------------------------------------------------------------------------------
+
 # download all md5s first, then download all tarballs
 echo "[blastdl] [$(date)] starting download ..." >&2
 cat << EOF | lftp ftp://ftp.ncbi.nlm.nih.gov
 set net:socket-buffer 33554432
-mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz\.md5$" /blast/db $BLAST_DB_DIR/dl
-mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz$"      /blast/db $BLAST_DB_DIR/dl
+mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz\.md5$" /blast/db $BLAST_DB_DL_DIR
+mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz$"      /blast/db $BLAST_DB_DL_DIR
 EOF
 echo "[blastdl] [$(date)] done" >&2
 
-pushd $BLAST_DB_DIR/dl &> /dev/null
+pushd $BLAST_DB_DL_DIR &> /dev/null
 
 BLAST_DB_DATE=$(date +%F)
 
