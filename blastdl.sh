@@ -27,7 +27,7 @@ echo '[blastdl] checking md5 ...' &&
 md5sum -c *.md5 &&
 echo '[blastdl] done, extracting ...' &&
 for i in $BLAST_DB_DATASET.*.tar.gz ; do
-  tar xzfvo $i || exit 1
+  tar xzfo $i || exit 1
 done &&
 echo '[blastdl] done, tagging with date and moving ...' &&
 sed -i "s/$BLAST_DB_DATASET/$BLAST_DB_DATASET-$BLAST_DB_DATE/g" $BLAST_DB_DATASET.pal &&
