@@ -66,7 +66,7 @@ pushd $BLAST_DB_DL_DIR &> /dev/null
 BLAST_DB_DATE=$(date +%F)
 
 echo "[blastdl] [$(date)] checking md5 ..." >&2 &&
-md5sum -c *.md5 &&
+md5sum --check --quiet *.md5 &&
 echo "[blastdl] [$(date)] done, extracting ..." >&2 &&
 for i in $BLAST_DB_DATASET.*.tar.gz ; do
   tar xzfo $i || exit 1
