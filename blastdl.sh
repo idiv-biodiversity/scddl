@@ -22,7 +22,7 @@ BLAST_DB_DIR=$2
   exit 1
 }
 
-BLAST_DB_DL_DIR=$(mktemp -d)
+BLAST_DB_DL_DIR=$(mktemp -d --tmpdir=$BLAST_DB_DIR .blastdl-XXXXXXXXXX)
 trap 'rm -rf $BLAST_DB_DL_DIR' EXIT INT TERM
 
 # ------------------------------------------------------------------------------
