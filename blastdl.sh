@@ -76,6 +76,8 @@ update_metadata_file &&
 for i in $BLAST_DB_DATASET.* ; do
   mv -n $i $BLAST_DB_DIR/${i/$BLAST_DB_DATASET/$BLAST_DB_DATASET-$BLAST_DB_DATE} || exit 1
 done &&
-echo "[blastdl] [$(date)] now YOU need to remove access right for krausec!" >&2
+echo "[blastdl] [$(date)] done, setting read only ..." >&2 &&
+chmod 444 $BLAST_DB_DIR/$BLAST_DB_DATASET-$BLAST_DB_DATE* &&
+echo "[blastdl] [$(date)] done." >&2
 
 popd &> /dev/null
