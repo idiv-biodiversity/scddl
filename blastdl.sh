@@ -7,7 +7,7 @@
 # ------------------------------------------------------------------------------
 
 function usage {
-  echo "usage: $(dirname $0) dbname dir"
+  echo "usage: bash $0 dbname dir"
 }
 
 BLAST_DB_DATASET=$1
