@@ -35,7 +35,7 @@ function update_metadata_file {
       BLAST_DB_METADATA_FILE=$BLAST_DB_DATASET.pal
       ;;
 
-    nt)
+    nt|refseq_genomic)
       BLAST_DB_METADATA_FILE=$BLAST_DB_DATASET.nal
       ;;
     *)
