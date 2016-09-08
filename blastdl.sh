@@ -77,6 +77,7 @@ md5sum --check --quiet *.md5 &&
 log.info "... md5 success, extracting ..." &&
 for i in $BLAST_DB_DATASET.*.tar.gz ; do
   tar xzfo $i || exit 1
+  rm $i $i.md5
 done &&
 log.info "... extracting finished, tagging with date and moving ..." &&
 blastdl.update.metadata &&
