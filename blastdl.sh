@@ -4,6 +4,8 @@
 # configuration, arguments
 # ------------------------------------------------------------------------------
 
+umask 0022
+
 function usage {
   echo "usage: bash $0 dbname dir"
 }
@@ -41,8 +43,8 @@ function blastdl.download {
   # download all md5s first, then download all tarballs
   cat << EOF | lftp ftp://ftp.ncbi.nlm.nih.gov
 set net:socket-buffer 33554432
-mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz\.md5$" /blast/db $BLAST_DB_DL_DIR
-mirror -r -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz$"      /blast/db $BLAST_DB_DL_DIR
+mirror -r -p -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz\.md5$" /blast/db $BLAST_DB_DL_DIR
+mirror -r -p -P 8 -i "^$BLAST_DB_DATASET\.[0-9]+\.tar\.gz$"      /blast/db $BLAST_DB_DL_DIR
 EOF
 }
 
@@ -77,7 +79,7 @@ md5sum --check --quiet *.md5 &&
 log.info "... md5 success, extracting ..." &&
 for i in $BLAST_DB_DATASET.*.tar.gz ; do
   tar xzfo $i || exit 1
-  rm $i $i.md5
+  rm -f $i $i.md5
 done &&
 log.info "... extracting finished, tagging with date and moving ..." &&
 blastdl.update.metadata &&
