@@ -50,7 +50,7 @@ EOF
 
 function blastdl.update.metadata {
   case $BLAST_DB_DATASET in
-    nr)
+    nr|refseq_protein)
       BLAST_DB_METADATA_FILE=$BLAST_DB_DATASET.pal
       ;;
 
