@@ -1,40 +1,72 @@
-BLAST Download
-==============
+Scientific Computing Data Set Download
+======================================
 
-Downloads NCBI's BLAST databases. Originally intended for High-Performance Cluster systems to provide the databases within globally readable shares so all user groups can access the same databases.
+**scddl** (pronounced **scuttle**) downloads data sets for scientific
+computing.
 
-Features
---------
 
--   existing files are not overwritten
+Table of Contents
+-----------------
 
-    All running jobs would have inconsistent results if files would be updated in place.
-    
--   downloaded datasets are tagged with the download date
-    
-    Each consistent download is tagged with the local date of the download. You can access these datasets via:
-    
-        blastn -db /data/db/blast/nt-2016-09-01 ...
-        
-    This also allows for **reproducible research**, which you would not be able to do with in place updates of the database files.
+<!-- toc -->
 
--   md5s are rigorously checked
+- [Goals and Features](#goals-and-features)
+  * [Consistency](#consistency)
+  * [Usability](#usability)
+- [Usage](#usage)
 
-    If one md5 does not match the entire update is canceled. The md5s are downloaded prior to the tarballs. If you download each tarball individually and the respective md5 after, you will never have a consistent download of the entire dataset, because NCBI updates the database in place on their ftp server. Thus, the only way to have a consistent dataset is to download all the md5s in advance and the tarballs after it and throw everything away and start fresh if something does not match.
+<!-- tocstop -->
 
--   you can specify the download directory
 
-    Intended to be a globally readable share. This way, all users can access the same files instead of having to download the files to their individual personal or group directories. This approach has a few advantages:
-    
-    - no user or group quotas are utilized
-    - a single copy of the database, not multiple copies for each user or group
-    - a single copy can also be cached better, thus provided faster by the cluster file system, which would not be the case with individual copies
+Goals and Features
+------------------
 
--   output is sent to syslog with the tag **blastdl**
+### Consistency
 
-    To get the log, type e.g.:
+-   **integrity checks**
 
-        journalctl -t blastdl
+    Data sets that provide file integrity information, e.g. MD5 checksums, are
+    rigorously checked.
+
+-   **strict versioning**
+
+    Data sets that are not inherently versioned will be tagged with the
+    download date. This makes **reproducible research** possible. Additionally,
+    these data sets have a link to the latest version.
+
+    A result of this is that **existing files are never overwritten**. All
+    running jobs would have inconsistent results if files would be updated in
+    place.
+
+
+### Usability
+
+-   **centralized storage location**
+
+    Especially on scientific computing platforms, the data sets are intended to
+    be downloaded to globally accessible storage locations. This avoids that
+    users or groups have to maintain their own copies and that their file
+    system quotas are stressed. The system administrators can lift this burden
+    off of their users.
+
+    Another advantage of a centralized storage location is that the file system
+    can better cache the data sets when multiple users access it. This can
+    result in better I/O performance.
+
+-   **automatic updates**
+
+    The download tools are designed to be run as **cron jobs** or **systemd
+    timers**. You can, of course, run them manually, but the real convenience
+    benefit comes from automation.
+
+-   **logging to syslog**
+
+    The download tools send their output to syslog with their script name as
+    the tag, e.g. the tool **ncbidl.sh** would use **ncbidl** as tag. You can
+    then search for these tags, e.g.:
+
+        journalctl -t ncbidl
+
 
 Usage
 -----
@@ -42,6 +74,6 @@ Usage
 Intended to be used as cron jobs, e.g.:
 
 ```
-@monthly time bash /path/to/blastdl/blastdl.sh nr /data/db/blast
-@monthly time bash /path/to/blastdl/blastdl.sh nt /data/db/blast
+@monthly time bash /path/to/scddl/ncbidl.sh nr /data/db/blast
+@monthly time bash /path/to/scddl/ncbidl.sh nt /data/db/blast
 ```
