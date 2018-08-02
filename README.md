@@ -13,6 +13,7 @@ Table of Contents
 - [Goals and Features](#goals-and-features)
   * [Consistency](#consistency)
   * [Usability](#usability)
+- [Supported Data Sets](#supported-data-sets)
 - [Usage](#usage)
 
 <!-- tocstop -->
@@ -68,12 +69,19 @@ Goals and Features
         journalctl -t ncbidl
 
 
+Supported Data Sets
+-------------------
+
+- [NCBI](https://ftp.ncbi.nlm.nih.gov)
+  - requires **lftp**
+
+
 Usage
 -----
 
 Intended to be used as cron jobs, e.g.:
 
 ```
-@monthly time bash /path/to/scddl/ncbidl.sh nr /data/db/blast
-@monthly time bash /path/to/scddl/ncbidl.sh nt /data/db/blast
+@monthly time bash /path/to/ncbidl.sh blast/db/nr /data/db
+@monthly time bash /path/to/ncbidl.sh blast/db/nt /data/db
 ```
