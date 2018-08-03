@@ -89,13 +89,8 @@ do
     -p|--parallel)
       shift
       cores=${1:?"parallel option has no argument"}
-      case "$cores" in
-        [0-9]+)
-          ;;
-        *)
-          bailout "parallel option argument is not a number: $cores"
-          ;;
-      esac
+      [[ $cores =~ ^[0-9]+$ ]] ||
+        bailout "parallel option argument is not a number: $cores"
       shift
       ;;
 
