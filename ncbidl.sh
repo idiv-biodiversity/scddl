@@ -219,13 +219,18 @@ download ||
 
 pushd "$tmpdir" &> /dev/null
 
-md5sum -c --quiet "$(find "$tmpdir" -name '*.md5')" ||
+find . -name '*.md5' |
+  while read -r hash
+  do
+    cat "$hash"
+  done |
+  md5sum -c --quiet ||
   bailout 'verification error'
 
 [[ $verbose == yes ]] &&
   log.info "extracting tarballs"
 
-find "$tmpdir" -name '*.tar.gz' |
+find . -name '*.tar.gz' |
   while read -r tarball
   do
     tar xzfo "$tarball" ||
