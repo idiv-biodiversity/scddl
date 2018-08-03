@@ -1,0 +1,19 @@
+sudo: false
+
+os: linux
+dist: trusty
+
+language: generic
+
+addons:
+  apt:
+    packages:
+      - lftp
+      - tree
+
+before_script:
+  - mkdir /tmp/db
+
+script:
+  - bash ncbidl.sh -v -p 2 blast/db/vector /tmp/db
+  - tree /tmp/db

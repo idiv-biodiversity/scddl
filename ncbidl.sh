@@ -194,6 +194,9 @@ function download {
 # bigger socket buffer, better I/O
 set net:socket-buffer 33554432
 
+# use IPv4 only
+set dns:order "inet"
+
 # download md5s first
 mirror -r -p -P $cores -i \
        "^$(basename "$dataset")\\.*\\.tar\\.gz\\.md5$" \
