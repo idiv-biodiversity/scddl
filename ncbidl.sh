@@ -194,12 +194,12 @@ set dns:order "inet"
 
 # download md5s first
 mirror -r -p -P $cores -i \
-       "^$(basename "$dataset")\\.*\\.tar\\.gz\\.md5$" \
+       "^$(basename "$dataset").*\\.tar\\.gz\\.md5$" \
        /$(dirname "$dataset") $tmpdir
 
 # then download tarballs
 mirror -r -p -P $cores -i \
-       "^$(basename "$dataset")\\.*\\.tar\\.gz$" \
+       "^$(basename "$dataset").*\\.tar\\.gz$" \
        /$(dirname "$dataset") $tmpdir
 EOF
 }
