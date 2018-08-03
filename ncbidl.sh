@@ -185,6 +185,10 @@ output_dir="$output_basedir/$download_date"
 # -----------------------------------------------------------------------------
 
 function download {
+  local v
+  [[ $verbose == yes ]] &&
+    v=y
+
   cat << EOF | lftp ftp://ftp.ncbi.nlm.nih.gov
 # bigger socket buffer, better I/O
 set net:socket-buffer 33554432
@@ -193,12 +197,12 @@ set net:socket-buffer 33554432
 set dns:order "inet"
 
 # download md5s first
-mirror -r -p -P $cores -i \
+mirror ${v:+-v} -r -p -P $cores -i \
        "^$(basename "$dataset").*\\.tar\\.gz\\.md5$" \
        /$(dirname "$dataset") $tmpdir
 
 # then download tarballs
-mirror -r -p -P $cores -i \
+mirror ${v:+-v} -r -p -P $cores -i \
        "^$(basename "$dataset").*\\.tar\\.gz$" \
        /$(dirname "$dataset") $tmpdir
 EOF
