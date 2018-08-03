@@ -12,6 +12,10 @@ app=$(basename "$0" .sh)
 version=$(git describe --always --long --dirty 2> /dev/null) ||
   version="0.1.0"
 
+# get utilities
+# shellcheck source=util.sh
+source "$(dirname "$0")"/util.sh
+
 # -----------------------------------------------------------------------------
 # usage
 # -----------------------------------------------------------------------------
@@ -54,44 +58,6 @@ OTHER OPTIONS
   --version             shows this tools version
 
 EOF
-}
-
-# -----------------------------------------------------------------------------
-# helpers
-# -----------------------------------------------------------------------------
-
-function log.info {
-  if [[ -t 0 ]]
-  then
-    echo -e "\\e[1m$app: $*\\e[0m"
-  else
-    logger -p user.info -t "$app" "$@"
-  fi
-}
-
-function log.error {
-  if [[ -t 0 ]]
-  then
-    echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
-  else
-    logger -p user.err -t "$app" "$@"
-  fi
-}
-
-# $1 message
-# $2 exit status, optional, defaults to 1
-function bailout {
-  log.error "$1"
-  exit "${2:-1}"
-}
-
-function tool.available {
-  local tool=$1
-
-  if ! command -v "$tool" &> /dev/null
-  then
-    bailout "$tool not found"
-  fi
 }
 
 # -----------------------------------------------------------------------------
