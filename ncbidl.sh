@@ -172,7 +172,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 tmpdir=$(mktemp -d --tmpdir="$output_prefix" ".$app-XXXXXXXXXX")
-trap 'rm -r "$tmpdir"' EXIT INT TERM
+trap 'rm -fr "$tmpdir"' EXIT INT TERM
 
 download_date=$(date +%F)
 
@@ -198,12 +198,12 @@ set dns:order "inet"
 
 # download md5s first
 mirror ${v:+-v} -r -p -P $cores -i \
-       "^$(basename "$dataset").*\\.tar\\.gz\\.md5$" \
+       "^$(basename "$dataset").*\\.gz\\.md5$" \
        /$(dirname "$dataset") $tmpdir
 
 # then download tarballs
 mirror ${v:+-v} -r -p -P $cores -i \
-       "^$(basename "$dataset").*\\.tar\\.gz$" \
+       "^$(basename "$dataset").*\\.gz$" \
        /$(dirname "$dataset") $tmpdir
 EOF
 }
@@ -227,19 +227,33 @@ find . -name '*.md5' |
   while read -r hash
   do
     cat "$hash"
+    rm "$hash"
   done |
   md5sum -c --quiet ||
   bailout 'verification error'
 
 [[ $verbose == yes ]] &&
-  log.info "extracting tarballs"
+  log.info "extracting files"
 
-find . -name '*.tar.gz' |
-  while read -r tarball
+find . -type f |
+  while read -r file
   do
-    tar xzfo "$tarball" ||
-      bailout "extracting $tarball failed"
-    rm -f "$tarball" "$tarball.md5"
+    case "$file" in
+      *.tar.gz)
+        tar xzfo "$file" ||
+          bailout "extracting $file failed"
+        rm -f "$file"
+        ;;
+
+      *.gz)
+        gunzip "$file" ||
+          bailout "decompressing $file failed"
+        ;;
+
+      *)
+        bailout "do not recognize file type, open issue https://github.com/idiv-biodiversity/scddl/issues"
+        ;;
+    esac
   done
 
 popd &> /dev/null
@@ -247,14 +261,10 @@ popd &> /dev/null
 [[ $verbose == yes ]] &&
   log.info "moving from tmp dir to final destination"
 
-mkdir -p "$output_dir"
+mkdir -p "$(dirname "$output_dir")"
 
-find "$tmpdir" -mindepth 1 -name "$(basename "$dataset")*" |
-  while read -r file
-  do
-    mv -n "$file" "$output_dir" ||
-      bailout "moving failed"
-  done
+mv -n "$tmpdir" "$output_dir" ||
+  bailout "moving failed"
 
 [[ $verbose == yes ]] &&
   log.info "setting read only"
