@@ -110,7 +110,7 @@ do
       ;;
 
     -*)
-      bailout "unrecognized option: $1" >&2
+      bailout "unrecognized option: $1"
       ;;
 
     *)
