@@ -15,5 +15,5 @@ before_script:
   - mkdir /tmp/db
 
 script:
-  - bash ncbidl.sh -v -p 2 blast/db/vector /tmp/db
+  - bash ncbidl.sh -v -p 2 /tmp/db blast/db/vector
   - tree /tmp/db

@@ -82,9 +82,9 @@ Supported Data Sets
 Usage
 -----
 
-Intended to be used as cron jobs, e.g.:
+The download tools can also be used as cron jobs, e.g.:
 
 ```
-@monthly time bash /path/to/ncbidl.sh blast/db/nr /data/db
-@monthly time bash /path/to/ncbidl.sh blast/db/nt /data/db
+@monthly time bash /path/to/ncbidl.sh /data/db blast/db/nr
+@monthly time bash /path/to/ncbidl.sh /data/db blast/db/nt
 ```
