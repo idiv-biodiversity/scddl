@@ -11,9 +11,20 @@ addons:
       - lftp
       - tree
 
+install:
+  - wget https://github.com/bbuchfink/diamond/releases/download/v0.9.22/diamond-linux64.tar.gz
+  - tar xzf diamond-linux64.tar.gz diamond
+  - mkdir -p ~/bin && mv diamond ~/bin
+  - export PATH="~/bin:$PATH"
+
 before_script:
   - mkdir /tmp/db
 
 script:
   - bash ncbidl.sh -v -p 2 /tmp/db blast/db/vector
+  - >-
+    bash diamonddb.sh -v -p 2 /tmp/db
+    blast/db/FASTA/pdbaa
+    pub/taxonomy/accession2taxid/pdb.accession2taxid
+    pub/taxonomy/taxdump
   - tree /tmp/db

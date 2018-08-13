@@ -77,6 +77,8 @@ Supported Data Sets
 
 - [NCBI](https://ftp.ncbi.nlm.nih.gov)
   - requires **lftp**
+- [diamond](https://github.com/bbuchfink/diamond)
+  - builds diamond database using the `makedb` sub-command from NCBI sources
 
 
 Usage
