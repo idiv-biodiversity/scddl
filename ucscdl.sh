@@ -172,8 +172,8 @@ EOF
 # -----------------------------------------------------------------------------
 
 tmpdir=$(mktemp -d --tmpdir="$output_prefix" ".$app-XXXXXXXXXX")
-#trap 'rm -fr "$tmpdir"' EXIT INT TERM
-echo $tmpdir
+trap 'rm -fr "$tmpdir"' EXIT INT TERM
+
 download_date=$(date +%F)
 
 output_basedir="$output_prefix/ucsc/$dataset"
