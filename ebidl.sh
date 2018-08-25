@@ -172,8 +172,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 tmpdir=$(mktemp -d --tmpdir="$output_prefix" ".$app-XXXXXXXXXX")
-echo $tmpdir
-#trap 'rm -fr "$tmpdir"' EXIT INT TERM
+trap 'rm -fr "$tmpdir"' EXIT INT TERM
 
 download_date=$(date +%F)
 
