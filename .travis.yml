@@ -26,6 +26,10 @@ script:
     blast/db/vector
     refseq/release/mitochondrion/mitochondrion.1.rna.gbff
   - >-
+    bash ucscdl.sh -v -p 2 /tmp/db
+    goldenPath/xenTro9/bigZips/refMrna.fa
+    goldenPath/xenTro9/bigZips/xenTro9.chrom.sizes
+  - >-
     bash diamonddb.sh -v -p 2 /tmp/db
     blast/db/FASTA/pdbaa
     pub/taxonomy/accession2taxid/pdb.accession2taxid

@@ -96,6 +96,7 @@ Source data sets are downloaded directly off the internet.
 - [EBI](ftp://ftp.ebi.ac.uk): `ebidl.sh`
 - [Ensembl](https://ftp.ensembl.org): `ensembldl.sh`
 - [NCBI](https://ftp.ncbi.nlm.nih.gov): `ncbidl.sh`
+- [UCSC](ftp://hgdownload.cse.ucsc.edu): `ucscdl.sh`
 
 ### Derived Data Sets
 
