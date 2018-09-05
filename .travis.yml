@@ -27,4 +27,7 @@ script:
     blast/db/FASTA/pdbaa
     pub/taxonomy/accession2taxid/pdb.accession2taxid
     pub/taxonomy/taxdump
+  - >-
+    bash ensembldl.sh -v -p 2 /tmp/db
+    pub/release-93/fasta/gallus_gallus/dna/Gallus_gallus
   - tree /tmp/db

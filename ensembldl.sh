@@ -223,16 +223,10 @@ download ||
 
 pushd "$tmpdir" &> /dev/null
 
-find . -name '*.md5' |
-  while read -r hash
-  do
-    cat "$hash"
-    rm "$hash"
-  done |
-  md5sum -c --quiet ||
-  bailout 'verification error'
-
-if [[ -f MD5SUMS ]]; then
+#if there is a CHECKSUMS FILE
+#- get the lines of checksum corresponding to downloaded files -> _CHECKSUMS
+#- verify
+if [[ -f CHECKSUMS ]]; then
   find . -name "*gz" | while read -r file
   do
     grep $(basename $file .gz) CHECKSUMS
