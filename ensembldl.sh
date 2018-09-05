@@ -232,6 +232,7 @@ if [[ -f MD5SUM ]]; then
   do
     grep $(basename $file .gz) MD5SUM
   done | md5sum -c --quiet || bailout 'verification error'
+  rm MD5SUM
 elif [[ -f CHECKSUMS ]]; then
   find . -name "*gz" | while read -r file
   do
@@ -239,6 +240,7 @@ elif [[ -f CHECKSUMS ]]; then
   done | sort -k 3 > _CHKSUMSAVAIL
   (sum $(find . -iname "*gz" | sed 's/\.\///' ) | sort -k 3 | diff -q - _CHKSUMSAVAIL) ||
   bailout 'verification error'
+  rm CHECKSUMS _CHKSUMSAVAIL
 else
   log.info "checksums unavailable -> skipping verification"
 fi
