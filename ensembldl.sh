@@ -172,7 +172,8 @@ EOF
 # -----------------------------------------------------------------------------
 
 tmpdir=$(mktemp -d --tmpdir="$output_prefix" ".$app-XXXXXXXXXX")
-trap 'rm -fr "$tmpdir"' EXIT INT TERM
+#trap 'rm -fr "$tmpdir"' EXIT INT TERM
+echo $tmpdir
 
 download_date=$(date +%F)
 
@@ -198,7 +199,7 @@ set dns:order "inet"
 
 # download md5s first
 mirror ${v:+-v} -r -p -P $cores -i \
-       "^(CHECK|MD5)SUMS$" \
+       "^(CHECKSUMS|MD5SUM)$" \
        /$(dirname "$dataset") $tmpdir
 
 # then download tarballs
@@ -223,18 +224,20 @@ download ||
 
 pushd "$tmpdir" &> /dev/null
 
-if [[ -f MD5SUMS ]]; then
-  ln -s MD5SUMS _CHKSUMS
-elif [[ -f CHECKSUMS ]]; then
-  ln -s CHECKSUMS _CHKSUMS
-fi
-
-if [[ -e _SUMS ]]; then
+#ensembl sometimes has MD5SUM files and sometimes CHKSUMS files
+#these cases are covered by creating a link (in addition there are
+#sometimes no checksums at all)
+if [[ -f MD5SUM ]]; then
   find . -name "*gz" | while read -r file
   do
-    grep $(basename $file .gz) _SUMS
+    grep $(basename $file .gz) MD5SUM
+  done | md5sum -c --quiet || bailout 'verification error'
+elif [[ -f CHECKSUMS ]]; then
+  find . -name "*gz" | while read -r file
+  do
+    grep $(basename $file .gz) CHECKSUMS
   done | sort -k 3 > _CHKSUMSAVAIL
-  (sum *gz | diff - _CHECKSUMSAVAIL) ||
+  (sum $(find . -iname "*gz" | sed 's/\.\///' ) | sort -k 3 | diff -q - _CHKSUMSAVAIL) ||
   bailout 'verification error'
 else
   log.info "checksums unavailable -> skipping verification"
