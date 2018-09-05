@@ -198,7 +198,7 @@ set dns:order "inet"
 
 # download md5s first
 mirror ${v:+-v} -r -p -P $cores -i \
-       "^CHECKSUMS$" \
+       "^(CHECK|MD5)SUMS$" \
        /$(dirname "$dataset") $tmpdir
 
 # then download tarballs
@@ -223,17 +223,19 @@ download ||
 
 pushd "$tmpdir" &> /dev/null
 
-#if there is a CHECKSUMS FILE
-#- get the lines of checksum corresponding to downloaded files -> _CHECKSUMS
-#- verify
-if [[ -f CHECKSUMS ]]; then
+if [[ -f MD5SUMS ]]; then
+  ln -s MD5SUMS _CHKSUMS
+elif [[ -f CHECKSUMS ]]; then
+  ln -s CHECKSUMS _CHKSUMS
+fi
+
+if [[ -e _SUMS ]]; then
   find . -name "*gz" | while read -r file
   do
-    grep $(basename $file .gz) CHECKSUMS
-  done | sort -k 3 > _CHECKSUMS
-  (sum *gz | diff - _CHECKSUMS) ||
+    grep $(basename $file .gz) _SUMS
+  done | sort -k 3 > _CHKSUMSAVAIL
+  (sum *gz | diff - _CHECKSUMSAVAIL) ||
   bailout 'verification error'
-  rm _CHECKSUMS CHECKSUMS
 else
   log.info "checksums unavailable -> skipping verification"
 fi
