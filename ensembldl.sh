@@ -172,8 +172,7 @@ EOF
 # -----------------------------------------------------------------------------
 
 tmpdir=$(mktemp -d --tmpdir="$output_prefix" ".$app-XXXXXXXXXX")
-#trap 'rm -fr "$tmpdir"' EXIT INT TERM
-echo $tmpdir
+trap 'rm -fr "$tmpdir"' EXIT INT TERM
 
 download_date=$(date +%F)
 
@@ -224,9 +223,10 @@ download ||
 
 pushd "$tmpdir" &> /dev/null
 
-#ensembl sometimes has MD5SUM files and sometimes CHKSUMS files
-#these cases are covered by creating a link (in addition there are
-#sometimes no checksums at all)
+#ensembl sometimes has 3 cases for checksums: 
+# - MD5SUM file (that need to be checked with md5sum) 
+# - HKSUMS file (to be checked with sum) 
+# - no checksum at all
 if [[ -f MD5SUM ]]; then
   find . -name "*gz" | while read -r file
   do
