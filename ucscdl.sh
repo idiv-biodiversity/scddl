@@ -232,14 +232,13 @@ pushd "$tmpdir" &> /dev/null
 # because ucsc has a mixture of md5 per file and a md5sum.txt file .. 
 # also in the same directory
 if [[ -f md5sum.txt ]]; then
-  cat md5sum.txt |
   while read -r line
   do
     fname=$(echo $line | sed 's/  / /; s/*//'| cut -d" " -f 2)
     if [[ -f $fname ]]; then
       echo $line > $fname.md5
     fi
-  done
+  done < md5sum.txt
   rm md5sum.txt
 fi
 
