@@ -200,11 +200,15 @@ set dns:order "inet"
 mirror ${v:+-v} -r -p -P $cores -i \
        "^md5sum.txt$" \
        /$(dirname "$dataset") $tmpdir
-
-# then download tarballs
 mirror ${v:+-v} -r -p -P $cores -i \
-       "^$(basename "$dataset").*\\.gz$" \
+       "^$(basename "$dataset").*md5$" \
        /$(dirname "$dataset") $tmpdir
+
+# then download data (everything not ending with md5)
+mirror ${v:+-v} -r -p -P $cores -i \
+       "^$(basename "$dataset").*" \
+       /$(dirname "$dataset") $tmpdir \
+       -x .md5$
 EOF
 }
 
@@ -223,21 +227,30 @@ download ||
 
 pushd "$tmpdir" &> /dev/null
 
-md5s=$(find . -iname "*md5*")
-if [[ $md5s ]]; then
-    cat $md5s > _md5sums
-    
-    find . -name "*gz" |
-    while read -r file
-    do
-      grep $(basename $file) _md5sums
-    done | 
-    md5sum -c --quiet ||
-    bailout 'verification error'
-    rm $md5s _md5sums
-else
-    log.info "md5 unavailable -> skipping verification"
+# if there is a md5sum.txt then extract the md5s for the downloaded files 
+# and save them in separate md5 files (one per download). this is done 
+# because ucsc has a mixture of md5 per file and a md5sum.txt file .. 
+# also in the same directory
+if [[ -f md5sum.txt ]]; then
+  cat md5sum.txt |
+  while read -r line
+  do
+    fname=$(echo $line | sed 's/  / /; s/*//'| cut -d" " -f 2)
+    if [[ -f $fname ]]; then
+      echo $line > $fname.md5
+    fi
+  done
+  rm md5sum.txt
 fi
+
+# now check the available md5s
+find . -name '*.md5' |
+  while read -r hash
+  do
+    cat "$hash"
+  done |
+  md5sum -c --quiet ||
+  bailout 'verification error'
 
 [[ $verbose == yes ]] &&
   log.info "extracting files"
@@ -258,7 +271,6 @@ find . -type f |
         ;;
 
       *)
-        bailout "do not recognize file type, open issue https://github.com/idiv-biodiversity/scddl/issues"
         ;;
     esac
   done
