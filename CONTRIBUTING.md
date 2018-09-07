@@ -2,7 +2,7 @@
 
 ## Pull Requests
 
-1.  Pull requests should be done in separate, so-called **feature branches**:
+1.  Pull requests should not be done in **master**:
 
     ```bash
     git checkout -b topic/name
