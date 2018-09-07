@@ -35,8 +35,8 @@ Goals and Features
 -   **strict versioning**
 
     Data sets that are not inherently versioned will be tagged with the
-    download date. This makes **reproducible research** possible. Additionally,
-    these data sets have a link to the latest version.
+    download date. This makes **reproducible research** possible. There **will
+    be no link to the latest** version to enforce this strict versioning.
 
     A result of this is that **existing files are never overwritten**. All
     running jobs would have inconsistent results if files would be updated in
