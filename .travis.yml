@@ -27,6 +27,8 @@ script:
     blast/db/FASTA/pdbaa
     pub/taxonomy/accession2taxid/pdb.accession2taxid
     pub/taxonomy/taxdump
-  - bash ensembldl.sh -v -p 2 pub/release-93/fasta/gallus_gallus/dna/Gallus_gallus.Gallus_gallus-5.0.dna.chromosome.3 /tmp/db
-  - bash ensembldl.sh -v -p 2 pub/release-93/bed/ensembl-compara/70_mammals.gerp_constrained_element/gerp_constrained_elements.bos_taurus /tmp/db
+  - >-
+    bash ensembldl.sh -v -p 2 /tmp/db 
+    pub/release-93/fasta/gallus_gallus/dna/Gallus_gallus.Gallus_gallus-5.0.dna.chromosome.3 
+    pub/release-93/bed/ensembl-compara/70_mammals.gerp_constrained_element/gerp_constrained_elements.bos_taurus 
   - tree /tmp/db
