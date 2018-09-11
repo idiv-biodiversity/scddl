@@ -25,22 +25,22 @@ $app $version
 
 USAGE
 
-  $app [options] [--] dataset output
+  $app [options] [--] prefix dataset...
 
 DESCRIPTION
 
-  download NCBI data set
+  download UCSC data set
 
 ARGUMENTS
 
-  dataset               the remote data set to download from the ftp server,
-                        example: blast/db/nr
-
-  output                the local data set directory,
+  prefix                the local data set directory,
                         example: /data/db
 
-                        the data set will be put in:
-                        \$output/ucsc/\$dataset/\$(date +%F)
+                        the data sets will be put in:
+                        \$prefix/ucsc/\$dataset/\$(date +%F)
+
+  dataset...            the remote data sets to download from the ftp server,
+                        example: blast/db/nr
 
   --                    ends option parsing
 
@@ -120,32 +120,40 @@ do
 done
 
 set +o nounset
-dataset=$1
-shift || bailout "missing argument: data set"
-output_prefix=$1
-shift || bailout "missing argument: output"
+prefix=$1
+shift || bailout "missing argument: prefix"
 set -o nounset
 
-if [[ "$*" != "" ]]
-then
-  bailout "trailing arguments: $*"
-fi
-
-# trim trailing slashes
 shopt -s extglob
-dataset="${dataset%%+(/)}"
-output_prefix="${output_prefix%%+(/)}"
+# trim trailing slashes
+prefix="${prefix%%+(/)}"
+
+datasets=()
+for d in "$@"
+do
+  datasets+=("${d%%+(/)}")
+done
+
 shopt -u extglob
+
+[[ ${#datasets[@]} -gt 0 ]] ||
+  bailout 'missing argument: dataset'
 
 # -----------------------------------------------------------------------------
 # verbose: output configuration
 # -----------------------------------------------------------------------------
 
-[[ $verbose == yes ]] &&
-cat << EOF
-dataset: $dataset
-output: $output_prefix
-
+if [[ $verbose == yes ]]
+then
+  cat << EOF
+prefix: $prefix
+datasets:
+EOF
+  for d in "${datasets[@]}"
+  do
+    echo "- $d"
+  done
+  cat << EOF
 parallel: $cores CPU cores
 
 versions:
@@ -153,32 +161,23 @@ versions:
 - $(lftp --version | head -1)
 
 EOF
+fi
 
 # -----------------------------------------------------------------------------
 # check arguments
 # -----------------------------------------------------------------------------
 
-[[ -n $dataset ]] ||
-  bailout "no remote data set specified"
+[[ -d $prefix ]] ||
+  bailout "local data set directory does not exist: $prefix"
 
-[[ -n $output_prefix ]] ||
-  bailout "local data set directory not specified"
-
-[[ -d $output_prefix ]] ||
-  bailout "local data set directory does not exist: $output_prefix"
+download_date=$(date +%F)
 
 # -----------------------------------------------------------------------------
 # preparation
 # -----------------------------------------------------------------------------
 
-tmpdir=$(mktemp -d --tmpdir="$output_prefix" ".$app-XXXXXXXXXX")
+tmpdir=$(mktemp -d --tmpdir="$prefix" ".$app-XXXXXXXXXX")
 trap 'rm -fr "$tmpdir"' EXIT INT TERM
-
-download_date=$(date +%F)
-
-output_basedir="$output_prefix/ucsc/$dataset"
-
-output_dir="$output_basedir/$download_date"
 
 # -----------------------------------------------------------------------------
 # application functions
@@ -204,7 +203,7 @@ mirror ${v:+-v} -r -p -P $cores -i \
        "^$(basename "$dataset").*md5$" \
        /$(dirname "$dataset") $tmpdir
 
-# then download data (everything not ending with md5)
+# then download tarballs (excluding everything not ending with md5)
 mirror ${v:+-v} -r -p -P $cores -i \
        "^$(basename "$dataset").*" \
        /$(dirname "$dataset") $tmpdir \
@@ -216,45 +215,56 @@ EOF
 # application
 # -----------------------------------------------------------------------------
 
-[[ $verbose == yes ]] &&
-  log.info "starting download of $dataset"
+for dataset in "${datasets[@]}"
+do
+  output_basedir="$prefix/ucsc/$dataset"
 
-download ||
-  bailout 'download failed'
+  output_dir="$output_basedir/$download_date"
 
-[[ $verbose == yes ]] &&
-  log.info "checking md5 checksums"
+  if [[ -e $output_dir ]]
+  then
+    log.info "skipping $dataset: already exists"
+    continue
+  fi
 
-pushd "$tmpdir" &> /dev/null
+  [[ $verbose == yes ]] &&
+    log.info "starting download of $dataset"
 
-# if there is a md5sum.txt then extract the md5s for the downloaded files 
-# and save them in separate md5 files (one per download). this is done 
-# because ucsc has a mixture of md5 per file and a md5sum.txt file .. 
-# also in the same directory
-if [[ -f md5sum.txt ]]; then
-  while read -r line
-  do
-    fname=$(echo $line | sed 's/  / /; s/*//'| cut -d" " -f 2)
-    if [[ -f $fname ]]; then
-      echo $line > $fname.md5
-    fi
-  done < md5sum.txt
-  rm md5sum.txt
-fi
+  download ||
+    bailout 'download failed'
 
-# now check the available md5s
-find . -name '*.md5' |
-  while read -r hash
-  do
-    cat "$hash"
-  done |
-  md5sum -c --quiet ||
-  bailout 'verification error'
+  [[ $verbose == yes ]] &&
+    log.info "checking md5 checksums"
 
-[[ $verbose == yes ]] &&
-  log.info "extracting files"
+  pushd "$tmpdir" &> /dev/null
 
-find . -type f |
+  # if there is a md5sum.txt then extract the md5s for the downloaded files 
+  # and save them in separate md5 files (one per download). this is done 
+  # because ucsc has a mixture of md5 per file and a md5sum.txt file .. 
+  # also in the same directory
+  if [[ -f md5sum.txt ]]; then
+    while read -r line
+    do
+      fname=$(echo $line | sed 's/  / /; s/*//'| cut -d" " -f 2)
+      if [[ -f $fname ]]; then
+        echo $line > $fname.md5
+      fi
+    done < md5sum.txt
+    rm md5sum.txt
+  fi
+
+  # now check the available md5s
+  find . -name '*.md5' |
+    while read -r hash
+    do
+      cat "$hash"
+    done |
+    md5sum -c --quiet ||
+    bailout 'verification error'
+
+  [[ $verbose == yes ]] &&
+    log.info "extracting files"
+
   while read -r file
   do
     case "$file" in
@@ -270,23 +280,28 @@ find . -type f |
         ;;
 
       *)
+        bailout << EOF
+do not recognize file type, please open issue for support:
+  https://github.com/idiv-biodiversity/scddl/issues
+EOF
         ;;
     esac
-  done
+  done < <(find . -type f)
 
-popd &> /dev/null
+  popd &> /dev/null
 
-[[ $verbose == yes ]] &&
-  log.info "moving from tmp dir to final destination"
+  [[ $verbose == yes ]] &&
+    log.info "moving from tmp dir to final destination"
 
-mkdir -p "$(dirname "$output_dir")"
+  mkdir -p "$(dirname "$output_dir")"
 
-mv -n "$tmpdir" "$output_dir" ||
-  bailout "moving failed"
+  mv -n "$tmpdir" "$output_dir" ||
+    bailout "moving failed"
 
-[[ $verbose == yes ]] &&
-  log.info "setting read only"
+  chmod -R +r "$output_dir"
+done
 
-chmod -R -w "$output_dir"
-
-log.info "done"
+if [[ $verbose == yes ]]
+then
+  log.info "done"
+fi
