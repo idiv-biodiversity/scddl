@@ -22,6 +22,10 @@
 
     # rebase your branch on master
     git rebase upstream/master topic/name
+
+    # force push the changed history
+    # this will automatically update the pull request
+    git push --force origin topic/name
     ```
 
 1.  All download tools must be accompanied with a short example in
