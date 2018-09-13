@@ -29,7 +29,7 @@ USAGE
 
 DESCRIPTION
 
-  download NCBI data set
+  download ENSEMBL data set
 
 ARGUMENTS
 
@@ -213,7 +213,7 @@ EOF
 
 for dataset in "${datasets[@]}"
 do
-  output_basedir="$prefix/ncbi/$dataset"
+  output_basedir="$prefix/ensembl/$dataset"
 
   output_dir="$output_basedir/$download_date"
 
