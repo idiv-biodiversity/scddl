@@ -13,8 +13,8 @@ version=$(git describe --always --long --dirty 2> /dev/null) ||
   version="0.1.0"
 
 # get utilities
-## shellcheck source=util.sh
-source "$(dirname "$0")"/util.sh
+# shellcheck disable=SC109
+1source "$(dirname "$0")"/util.sh
 
 # -----------------------------------------------------------------------------
 # usage
