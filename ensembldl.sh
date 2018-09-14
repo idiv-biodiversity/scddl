@@ -235,22 +235,26 @@ do
 
   #ensembl sometimes has 3 cases for checksums: 
   # - MD5SUM file (that need to be checked with md5sum) 
-  # - HKSUMS file (to be checked with sum) 
+  # - CHKSUMS file (to be checked with sum) 
   # - no checksum at all
   if [[ -f MD5SUM ]]; then
     find . -name "*gz" | while read -r file
     do
-      grep $(basename $file .gz) MD5SUM
+      grep "$(basename "$file" .gz)" MD5SUM
     done | md5sum -c --quiet || bailout 'verification error'
     rm MD5SUM
   elif [[ -f CHECKSUMS ]]; then
+    # extract checksum (1st 2 columns) from CHECKSUMS 
+    # get checksum for the downloaded files (note sum does not 
+    # print 3rd column: filename when called for single files)
     find . -name "*gz" | while read -r file
     do
-      grep $(basename $file .gz) CHECKSUMS
-    done | sort -k 3 > _CHKSUMSAVAIL
-    (sum $(find . -iname "*gz" | sed 's/\.\///' ) | sort -k 3 | diff -q - _CHKSUMSAVAIL) ||
-    bailout 'verification error'
-    rm CHECKSUMS _CHKSUMSAVAIL
+      grep "$(basename "$file" .gz)" CHECKSUMS | awk '{print $1,$2}' >> _REMOTECHKSUM
+      sum "$file" | awk '{print $1,$2}'>> _LOCALCHKSUM 
+    done 
+    diff -q _REMOTECHEKSUM _LOCALCHKSUM ||
+      bailout 'verification error'
+    rm CHECKSUMS _FILECHKSUM
   else
     log.info "checksums unavailable -> skipping verification"
   fi
