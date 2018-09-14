@@ -13,7 +13,7 @@ version=$(git describe --always --long --dirty 2> /dev/null) ||
   version="0.1.0"
 
 # get utilities
-# shellcheck source=util.sh
+## shellcheck source=util.sh
 source "$(dirname "$0")"/util.sh
 
 # -----------------------------------------------------------------------------
@@ -245,12 +245,12 @@ do
   if [[ -f md5sum.txt ]]; then
     while read -r line
     do
-      fname=$(echo $line | sed 's/  / /; s/*//'| cut -d" " -f 2)
-      if [[ -f $fname ]]; then
-        echo $line > $fname.md5
+      fname=$(echo "$line" | sed 's/  / /; s/*//'| cut -d" " -f 2)
+      if [[ -f "$fname" ]]; then
+        echo "$line" > "$fname.md5"
       fi
     done < md5sum.txt
-    rm md5sum.txt
+    rm md5sum.txt 
   fi
 
   # now check the available md5s
@@ -258,10 +258,11 @@ do
     while read -r hash
     do
       cat "$hash"
+      rm "$hash"
     done |
     md5sum -c --quiet ||
     bailout 'verification error'
-
+  
   [[ $verbose == yes ]] &&
     log.info "extracting files"
 
@@ -280,10 +281,7 @@ do
         ;;
 
       *)
-        bailout << EOF
-do not recognize file type, please open issue for support:
-  https://github.com/idiv-biodiversity/scddl/issues
-EOF
+        # ucsc also has uncompressed files \
         ;;
     esac
   done < <(find . -type f)
