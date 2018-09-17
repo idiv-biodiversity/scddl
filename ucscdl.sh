@@ -14,7 +14,7 @@ version=$(git describe --always --long --dirty 2> /dev/null) ||
 
 # get utilities
 # shellcheck disable=SC109
-1source "$(dirname "$0")"/util.sh
+source "$(dirname "$0")"/util.sh
 
 # -----------------------------------------------------------------------------
 # usage
