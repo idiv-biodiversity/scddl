@@ -13,7 +13,7 @@ version=$(git describe --always --long --dirty 2> /dev/null) ||
   version="0.1.0"
 
 # get utilities
-# shellcheck source=util.sh
+# shellcheck disable=SC1091
 source "$(dirname "$0")"/util.sh
 
 # -----------------------------------------------------------------------------
@@ -252,9 +252,9 @@ do
       grep "$(basename "$file" .gz)" CHECKSUMS | awk '{print $1,$2}' >> _REMOTECHKSUM
       sum "$file" | awk '{print $1,$2}'>> _LOCALCHKSUM 
     done 
-    diff -q _REMOTECHEKSUM _LOCALCHKSUM ||
+    diff -q _REMOTECHKSUM _LOCALCHKSUM ||
       bailout 'verification error'
-    rm CHECKSUMS _FILECHKSUM
+    rm CHECKSUMS _REMOTECHKSUM _LOCALCHKSUM
   else
     log.info "checksums unavailable -> skipping verification"
   fi
