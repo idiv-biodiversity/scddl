@@ -199,8 +199,6 @@ download_date=$(date +%F)
 name=$(basename "$in")
 
 output_dir="$prefix"/diamond/"$name"/"$download_date"
-mkdir -p "$output_dir"
-
 output="$output_dir/$name.dmnd"
 
 [[ -e $output ]] &&
@@ -246,6 +244,8 @@ else
 fi
 
 log.verbose "generating diamond db"
+
+mkdir -p "$output_dir"
 
 diamond \
   makedb \
