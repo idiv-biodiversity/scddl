@@ -39,9 +39,8 @@ ARGUMENTS
                         the data sets will be put in:
                         \$prefix/ebi/\$dataset/\$(date +%F)
 
-  dataset...            the remote data set to download from the ftp server,
+  dataset...            the remote data sets to download from the ftp server,
                         example: pub/databases/gencode/Gencode_human/release_28/gencode.v28.metadata.Entrez
-
 
   --                    ends option parsing
 
@@ -50,8 +49,9 @@ OPTIONS
   -p, --parallel cores  use \$cores parallel downloads,
                         default: number of cores available
 
-  -v, --verbose         output every command as it executes
-  -q, --quiet           disables verbose
+      --debug           output every command as it executes
+  -v, --verbose         enables verbose output
+  -q, --quiet           disables both debug and verbose
 
 OTHER OPTIONS
 
@@ -72,6 +72,7 @@ tool.available lftp
 # -----------------------------------------------------------------------------
 
 cores=$(grep -c ^processor /proc/cpuinfo)
+debug=no
 verbose=no
 
 for arg in "$@"
@@ -95,13 +96,29 @@ do
       shift
       ;;
 
+    --debug)
+      debug=yes
+      shift
+      ;;
+
+    --debug=yes|--debug=no)
+      debug=${1##--debug=}
+      shift
+      ;;
+
     -q|--quiet)
+      debug=no
       verbose=no
       shift
       ;;
 
     -v|--verbose)
       verbose=yes
+      shift
+      ;;
+
+    --verbose=yes|--verbose=no)
+      verbose=${1##--verbose=}
       shift
       ;;
 
@@ -162,7 +179,18 @@ versions:
 - $(lftp --version | head -1)
 
 EOF
+
+  md5sum_verbosity=""
+else
+  md5sum_verbosity="--quiet"
 fi
+
+# -----------------------------------------------------------------------------
+# debug mode
+# -----------------------------------------------------------------------------
+
+[[ $debug == yes ]] &&
+  set -o xtrace
 
 # -----------------------------------------------------------------------------
 # check arguments
@@ -178,8 +206,7 @@ download_date=$(date +%F)
 # -----------------------------------------------------------------------------
 
 tmpdir=$(mktemp -d --tmpdir="$prefix" ".$app-XXXXXXXXXX")
-echo $tmpdir
-#trap 'rm -fr "$tmpdir"' EXIT INT TERM
+trap 'rm -fr "$tmpdir"' EXIT INT TERM
 
 # -----------------------------------------------------------------------------
 # application functions
@@ -225,14 +252,12 @@ do
     continue
   fi
 
-  [[ $verbose == yes ]] &&
-    log.info "starting download of $dataset"
+  log.verbose "starting download of $dataset"
 
   download ||
     bailout 'download failed'
 
-  [[ $verbose == yes ]] &&
-    log.info "checking md5 checksums"
+  log.verbose 'verifying download'
 
   pushd "$tmpdir" &> /dev/null
 
@@ -246,39 +271,19 @@ do
       bailout 'verification error'
     rm MD5SUMS
   else
-    log.info "md5 unavailable -> skipping verification"
+    log.warning 'skipping verification: no checksums available'
   fi
 
-  [[ $verbose == yes ]] &&
-    log.info "extracting files"
+  log.verbose "extracting files"
 
   while read -r file
   do
-    case "$file" in
-      *.tar.gz)
-        tar xzfo "$file" ||
-          bailout "extracting $file failed"
-        rm -f "$file"
-        ;;
-
-      *.gz)
-        gunzip "$file" ||
-          bailout "decompressing $file failed"
-        ;;
-
-      *)
-        bailout << EOF
-do not recognize file type, please open issue for support:
-  https://github.com/idiv-biodiversity/scddl/issues
-EOF
-        ;;
-    esac
+    extract "$file"
   done < <(find . -type f)
 
   popd &> /dev/null
 
-  [[ $verbose == yes ]] &&
-    log.info "moving from tmp dir to final destination"
+  log.verbose "moving from tmp dir to final destination"
 
   mkdir -p "$(dirname "$output_dir")"
 
@@ -288,7 +293,4 @@ EOF
   chmod -R +r "$output_dir"
 done
 
-if [[ $verbose == yes ]]
-then
-  log.info "done"
-fi
+log.verbose "done"
