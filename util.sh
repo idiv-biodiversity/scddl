@@ -6,16 +6,22 @@ declare verbose
 if [[ -t 0 ]]
 then
   interactive=yes
+else
+  interactive=no
 fi
 
 if [[ -t 1 ]]
 then
   color_out=yes
+else
+  color_out=no
 fi
 
 if [[ -t 2 ]]
 then
   color_err=yes
+else
+  color_err=no
 fi
 
 function log.info {
