@@ -179,6 +179,10 @@ versions:
 - $(lftp --version | head -1)
 
 EOF
+
+  md5sum_verbosity=""
+else
+  md5sum_verbosity="--quiet"
 fi
 
 # -----------------------------------------------------------------------------
@@ -270,7 +274,7 @@ do
           '$2 == file' \
           MD5SUM
       done |
-      md5sum -c --quiet ||
+      md5sum -c $md5sum_verbosity ||
       bailout 'verification error'
 
     rm -f MD5SUM

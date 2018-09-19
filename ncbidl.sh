@@ -179,6 +179,10 @@ versions:
 - $(lftp --version | head -1)
 
 EOF
+
+  md5sum_verbosity=""
+else
+  md5sum_verbosity="--quiet"
 fi
 
 # -----------------------------------------------------------------------------
@@ -263,7 +267,7 @@ do
       cat "$hash"
       rm "$hash"
     done |
-    md5sum -c --quiet ||
+    md5sum -c $md5sum_verbosity ||
     bailout 'verification error'
 
   log.verbose "extracting files"
