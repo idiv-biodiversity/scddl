@@ -114,6 +114,11 @@ do
       shift
       ;;
 
+    --verbose=yes|--verbose=no)
+      verbose=${1##--verbose=}
+      shift
+      ;;
+
     --)
       shift
       break
