@@ -230,7 +230,7 @@ do
     bailout 'download failed'
 
   [[ $verbose == yes ]] &&
-    log.info "checking md5 checksums"
+    log.info 'verifying download'
 
   pushd "$tmpdir" &> /dev/null
 
