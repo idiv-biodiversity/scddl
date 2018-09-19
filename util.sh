@@ -2,10 +2,25 @@
 
 declare app
 
+if [[ -t 0 ]]
+then
+  interactive=yes
+fi
+
+if [[ -t 1 ]]
+then
+  color_out=yes
+fi
+
+if [[ -t 2 ]]
+then
+  color_err=yes
+fi
+
 function log.info {
-  if [[ -t 0 ]]
+  if [[ $interactive == yes ]]
   then
-    if [[ -t 1 ]]
+    if [[ $color_out == yes ]]
     then
       echo -e "\\e[1m$app: $*\\e[0m"
     else
@@ -17,9 +32,9 @@ function log.info {
 }
 
 function log.warning {
-  if [[ -t 0 ]]
+  if [[ $interactive == yes ]]
   then
-    if [[ -t 2 ]]
+    if [[ $color_err == yes ]]
     then
       echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
     else
@@ -31,9 +46,9 @@ function log.warning {
 }
 
 function log.error {
-  if [[ -t 0 ]]
+  if [[ $interactive == yes ]]
   then
-    if [[ -t 2 ]]
+    if [[ $color_err == yes ]]
     then
       echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
     else
