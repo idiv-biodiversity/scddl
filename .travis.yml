@@ -21,7 +21,10 @@ before_script:
   - mkdir /tmp/db
 
 script:
-  - bash ncbidl.sh -v -p 2 /tmp/db blast/db/vector
+  - >-
+    bash ncbidl.sh -v -p 2 /tmp/db
+    blast/db/vector
+    refseq/release/mitochondrion/mitochondrion.1.rna.gbff
   - >-
     bash diamonddb.sh -v -p 2 /tmp/db
     blast/db/FASTA/pdbaa
