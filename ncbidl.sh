@@ -248,25 +248,7 @@ do
 
   while read -r file
   do
-    case "$file" in
-      *.tar.gz)
-        tar xzfo "$file" ||
-          bailout "extracting $file failed"
-        rm -f "$file"
-        ;;
-
-      *.gz)
-        gunzip "$file" ||
-          bailout "decompressing $file failed"
-        ;;
-
-      *)
-        bailout << EOF
-do not recognize file type, please open issue for support:
-  https://github.com/idiv-biodiversity/scddl/issues
-EOF
-        ;;
-    esac
+    extract "$file"
   done < <(find . -type f)
 
   popd &> /dev/null

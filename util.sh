@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 declare app
+declare verbose
 
 if [[ -t 0 ]]
 then
@@ -73,4 +74,26 @@ function tool.available {
   then
     bailout "$tool not found"
   fi
+}
+
+function extract {
+  local file=$1
+
+  case "$file" in
+    *.tar.gz)
+      tar xzfo "$file" ||
+        bailout "extraction failed: $file"
+      rm -f "$file"
+      ;;
+
+    *.gz)
+      gunzip "$file" ||
+        bailout "decompression failed: $file"
+      ;;
+
+    *)
+      [[ $verbose == yes ]] &&
+        log.info "not extracting unknown format: $file"
+      ;;
+  esac
 }
