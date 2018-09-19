@@ -261,14 +261,25 @@ do
 
   pushd "$tmpdir" &> /dev/null
 
+  md5_combined=.combined.md5
+
   find . -name '*.md5' |
     while read -r hash
     do
       cat "$hash"
       rm "$hash"
-    done |
-    md5sum -c $md5sum_verbosity ||
-    bailout 'verification error'
+    done \
+      > "$md5_combined"
+
+  if [[ -f "$md5_combined" ]]
+  then
+    md5sum -c $md5sum_verbosity "$md5_combined" ||
+      bailout 'verification error'
+
+    rm -f "$md5_combined"
+  else
+    log.warning 'skipping verification: no checksums available'
+  fi
 
   log.verbose "extracting files"
 
