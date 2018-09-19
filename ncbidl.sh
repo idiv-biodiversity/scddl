@@ -49,8 +49,9 @@ OPTIONS
   -p, --parallel cores  use \$cores parallel downloads,
                         default: number of cores available
 
-  -v, --verbose         output every command as it executes
-  -q, --quiet           disables verbose
+      --debug           output every command as it executes
+  -v, --verbose         enables verbose output
+  -q, --quiet           disables both debug and verbose
 
 OTHER OPTIONS
 
@@ -71,6 +72,7 @@ tool.available lftp
 # -----------------------------------------------------------------------------
 
 cores=$(grep -c ^processor /proc/cpuinfo)
+debug=no
 verbose=no
 
 for arg in "$@"
@@ -94,7 +96,18 @@ do
       shift
       ;;
 
+    --debug)
+      debug=yes
+      shift
+      ;;
+
+    --debug=yes|--debug=no)
+      debug=${1##--debug=}
+      shift
+      ;;
+
     -q|--quiet)
+      debug=no
       verbose=no
       shift
       ;;
@@ -167,6 +180,13 @@ versions:
 
 EOF
 fi
+
+# -----------------------------------------------------------------------------
+# debug mode
+# -----------------------------------------------------------------------------
+
+[[ $debug == yes ]] &&
+  set -o xtrace
 
 # -----------------------------------------------------------------------------
 # check arguments
