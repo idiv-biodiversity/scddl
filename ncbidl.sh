@@ -223,14 +223,12 @@ do
     continue
   fi
 
-  [[ $verbose == yes ]] &&
-    log.info "starting download of $dataset"
+  log.verbose "starting download of $dataset"
 
   download ||
     bailout 'download failed'
 
-  [[ $verbose == yes ]] &&
-    log.info 'verifying download'
+  log.verbose 'verifying download'
 
   pushd "$tmpdir" &> /dev/null
 
@@ -243,8 +241,7 @@ do
     md5sum -c --quiet ||
     bailout 'verification error'
 
-  [[ $verbose == yes ]] &&
-    log.info "extracting files"
+  log.verbose "extracting files"
 
   while read -r file
   do
@@ -253,8 +250,7 @@ do
 
   popd &> /dev/null
 
-  [[ $verbose == yes ]] &&
-    log.info "moving from tmp dir to final destination"
+  log.verbose "moving from tmp dir to final destination"
 
   mkdir -p "$(dirname "$output_dir")"
 
@@ -264,7 +260,4 @@ do
   chmod -R +r "$output_dir"
 done
 
-if [[ $verbose == yes ]]
-then
-  log.info "done"
-fi
+log.verbose "done"

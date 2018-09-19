@@ -203,11 +203,9 @@ do
 
   if [[ -e "$d_path" ]]
   then
-    [[ $verbose == yes ]] &&
-      log.info "$dataset already exists, not downloading again"
+    log.verbose "$dataset already exists, not downloading again"
   else
-    [[ $verbose == yes ]] &&
-      log.info "adding to download list: $dataset"
+    log.verbose "adding to download list: $dataset"
 
     datasets+=("$dataset")
   fi
@@ -223,8 +221,7 @@ d_tn="$prefix/ncbi/$nodes/$download_date"
 
 if [[ ${#datasets[@]} -gt 0 ]]
 then
-  [[ $verbose == yes ]] &&
-    log.info "downloading datasets"
+  log.verbose "downloading datasets"
 
   bash \
     "$(dirname "$0")"/ncbidl.sh \
@@ -233,12 +230,10 @@ then
     "${datasets[@]}" ||
     bailout 'downloading data sets failed'
 else
-  [[ $verbose == yes ]] &&
-    log.info "all datasets already downloaded"
+  log.verbose "all datasets already downloaded"
 fi
 
-[[ $verbose == yes ]] &&
-  log.info "generating diamond db"
+log.verbose "generating diamond db"
 
 diamond \
   makedb \
@@ -249,7 +244,4 @@ diamond \
   --db "$output" ||
   bailout 'generating diamond db failed'
 
-if [[ $verbose == yes ]]
-then
-  log.info "done"
-fi
+log.verbose "done"

@@ -32,6 +32,13 @@ function log.info {
   fi
 }
 
+function log.verbose {
+  if [[ $verbose == yes ]]
+  then
+    log.info "$@"
+  fi
+}
+
 function log.warning {
   if [[ $interactive == yes ]]
   then
@@ -92,8 +99,7 @@ function extract {
       ;;
 
     *)
-      [[ $verbose == yes ]] &&
-        log.info "not extracting unknown format: $file"
+      log.verbose "not extracting unknown format: $file"
       ;;
   esac
 }
