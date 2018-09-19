@@ -16,6 +16,20 @@ function log.info {
   fi
 }
 
+function log.warning {
+  if [[ -t 0 ]]
+  then
+    if [[ -t 2 ]]
+    then
+      echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
+    else
+      echo "$app: $*" >&2
+    fi
+  else
+    logger -p user.warning -t "$app" "$@"
+  fi
+}
+
 function log.error {
   if [[ -t 0 ]]
   then

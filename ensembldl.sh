@@ -278,7 +278,7 @@ do
 
     rm -f CHECKSUMS $sum_remote $sum_local
   else
-    log.info "checksums unavailable -> skipping verification"
+    log.warning 'skipping verification: no checksums available'
   fi
 
   [[ $verbose == yes ]] &&
