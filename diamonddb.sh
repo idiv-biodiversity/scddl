@@ -162,8 +162,9 @@ shopt -u extglob
 # verbose: output configuration
 # -----------------------------------------------------------------------------
 
-[[ $verbose == yes ]] &&
-cat << EOF
+if [[ $verbose == yes ]]
+then
+  cat << EOF
 prefix: $prefix
 in: $in
 map: $map
@@ -176,6 +177,11 @@ versions:
 - $(diamond --version)
 
 EOF
+
+  diamond_verbosity="--verbose"
+else
+  diamond_verbosity="--quiet"
+fi
 
 # -----------------------------------------------------------------------------
 # check arguments
@@ -230,6 +236,7 @@ then
 
   bash \
     "$(dirname "$0")"/ncbidl.sh \
+    --verbose="$verbose" \
     --parallel "$cores" \
     "$prefix" \
     "${datasets[@]}" ||
@@ -242,6 +249,7 @@ log.verbose "generating diamond db"
 
 diamond \
   makedb \
+  $diamond_verbosity \
   --threads "$cores" \
   --in "$d_in"/"$name" \
   --taxonmap "$(find "$d_tm" -name '*.accession2taxid' | head -1)" \
