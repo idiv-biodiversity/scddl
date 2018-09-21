@@ -265,7 +265,7 @@ do
     find . -name "*gz" |
       while read -r file
       do
-        grep $(basename $file) MD5SUMS
+        grep "$(basename "$file")" MD5SUMS
       done |
       md5sum -c --quiet ||
       bailout 'verification error'
