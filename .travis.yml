@@ -35,4 +35,7 @@ script:
     pub/release-93/fasta/gallus_gallus/dna/Gallus_gallus.Gallus_gallus-5.0.dna.chromosome.3
     pub/release-93/bed/ensembl-compara/70_mammals.gerp_constrained_element/gerp_constrained_elements.bos_taurus
     pub/pre/fasta/cdna/felis_catus/fcatus_cat_protein_cdna
+  - >-
+    bash ebidl.sh -v -p 2 /tmp/db
+    pub/databases/gencode/Gencode_human/release_28/gencode.v28.metadata.Entrez
   - tree /tmp/db
