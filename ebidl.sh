@@ -267,7 +267,7 @@ do
       do
         grep "$(basename "$file")" MD5SUMS
       done |
-      md5sum -c --quiet ||
+      md5sum -c $md5sum_verbosity ||
       bailout 'verification error'
     rm MD5SUMS
   else
