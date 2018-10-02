@@ -25,6 +25,14 @@ script:
     bash ncbidl.sh -v -p 2 /tmp/db
     blast/db/vector
     refseq/release/mitochondrion/mitochondrion.1.rna.gbff
+  - bash ncbidl.sh -v -p 2 /tmp/db blast/db/vector
+  # tests for UCSC
+  # - 1st test: 1 zipped, md5 in separate file)
+  # - 2nd test: 1 unzipped, md5 in md5sum.txt
+  - >-
+    bash ucscdl.sh -v -p 2  /tmp/db
+    goldenPath/xenTro9/bigZips/refMrna.fa
+    goldenPath/xenTro9/bigZips/xenTro9.chrom.sizes
   - >-
     bash diamonddb.sh -v -p 2 /tmp/db
     blast/db/FASTA/pdbaa
