@@ -50,26 +50,32 @@ Goals and Features
     Especially on scientific computing platforms, the data sets are intended to
     be downloaded to globally accessible storage locations. This avoids that
     users or groups have to maintain their own copies and that their file
-    system quotas are stressed. The system administrators can lift this burden
-    off of their users.
+    system quotas are stressed. Also, new users can immediately start working
+    instead of having to download their data sets first.
 
-    Another advantage of a centralized storage location is that the file system
-    can better cache the data sets when multiple users access it. This can
-    result in better I/O performance.
+-   **improved file system performance**
 
--   **automatic updates**
+    Another advantage of centralized storage is that the file system can better
+    cache the data sets. This can result in improved I/O performance,
+    especially when a single data set is used concurrently by many users. Your
+    mileage may vary, based on caching capability of the used file system and
+    on the data set usage patterns.
 
-    The download tools are designed to be run as **cron jobs** or **systemd
-    timers**. You can, of course, run them manually, but the real convenience
-    benefit comes from automation.
+-   **periodic, automatic updates**
+
+    The download tools can be run as **cron jobs** or **systemd timers**. This
+    way, you can easily create periodic, automated updates of data sets.
 
 -   **logging to syslog**
 
-    The download tools send their output to syslog with their script name as
-    the tag, e.g. the tool **ncbidl.sh** would use **ncbidl** as tag. You can
-    then search for these tags, e.g.:
+    When run non-interactively, i.e. as **cron jobs** or **systemd timers**,
+    the download tools send their output to **syslog** with their script name
+    as the tag, e.g. the tool **ncbidl.sh** would use **ncbidl** as tag. You
+    can then search for these tags, e.g.:
 
-        journalctl -t ncbidl
+    ```bash
+    journalctl -t ncbidl
+    ```
 
 
 Supported Data Sets
