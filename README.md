@@ -93,7 +93,7 @@ bash ncbidl.sh --help
 
 Source data sets are downloaded directly off the internet.
 
-- [Ensembl](https://ftp.ensembl.org/pub/): `ensembldl.sh`
+- [Ensembl](https://ftp.ensembl.org): `ensembldl.sh`
 - [NCBI](https://ftp.ncbi.nlm.nih.gov): `ncbidl.sh`
 
 ### Derived Data Sets
