@@ -305,6 +305,7 @@ do
 
     rm -f CHECKSUMS $sum_remote $sum_local
   else
+    # ... c) no file for verification at all
     log.warning 'skipping verification: no checksums available'
   fi
 
