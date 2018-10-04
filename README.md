@@ -81,10 +81,26 @@ Goals and Features
 Supported Data Sets
 -------------------
 
-- [NCBI](https://ftp.ncbi.nlm.nih.gov)
-  - requires **lftp**
-- [diamond](https://github.com/bbuchfink/diamond)
-  - builds diamond database using the `makedb` sub-command from NCBI sources
+Each tool provides online help via the `--help` command line argument, e.g.:
+
+```bash
+bash ncbidl.sh --help
+```
+
+### Source Data Sets
+
+Source data sets are downloaded directly off the internet.
+
+- [Ensembl](ftp://ftp.ensembl.org/pub/): `ensembldl.sh`
+- [NCBI](https://ftp.ncbi.nlm.nih.gov): `ncbidl.sh`
+
+### Derived Data Sets
+
+Derived data sets are built from source data sets. They automatically download
+their sources, if these are not available yet.
+
+- [diamond](https://github.com/bbuchfink/diamond): `diamonddb.sh`
+  - builds diamond database from NCBI sources using the `makedb` sub-command
 
 
 Usage
