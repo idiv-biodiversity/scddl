@@ -109,3 +109,22 @@ function extract {
       ;;
   esac
 }
+
+# run a command and log command line if it was successful
+#
+# positional arguments:
+# - $1 log file name
+# - $2 command
+# - $x arguments
+function run.log {
+  local log=$1
+  shift
+
+  "$@"
+  local ret=$?
+
+  [[ $ret -eq 0 ]] &&
+    echo "$*" > "$log"
+
+  return $ret
+}
