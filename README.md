@@ -83,12 +83,6 @@ Goals and Features
 Supported Data Sets
 -------------------
 
-Each tool provides online help via the `--help` command line argument, e.g.:
-
-```bash
-bash ncbidl.sh --help
-```
-
 ### Source Data Sets
 
 Source data sets are downloaded directly off the internet.
@@ -110,7 +104,13 @@ their sources, if these are not available yet.
 Usage
 -----
 
-The download tools can also be used as cron jobs, e.g.:
+Each tool provides online help via the `--help` command line argument, e.g.:
+
+```bash
+bash ncbidl.sh --help
+```
+
+The download tools can also be used as **cron jobs**, e.g.:
 
 ```
 @monthly time bash /path/to/ncbidl.sh /data/db blast/db/nr
