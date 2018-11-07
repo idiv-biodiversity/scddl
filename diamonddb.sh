@@ -220,6 +220,7 @@ name=$(basename "$in")
 
 output_dir="$prefix"/diamond/"$name"/"$download_date"
 output="$output_dir/$name.dmnd"
+app_log="$output_dir/$app.log"
 
 [[ -e $output ]] &&
   bailout 'output already exists, not overwriting'
@@ -268,12 +269,16 @@ log.verbose "generating diamond db"
 
 mkdir -p "$output_dir"
 
-diamond \
+_taxonmap="$(find "$d_tm" -name '*.accession2taxid' | head -1)"
+
+run.log \
+  "$app_log" \
+  diamond \
   makedb \
   $diamond_verbosity \
   --threads "$cores" \
   --in "$d_in"/"$name" \
-  --taxonmap "$(find "$d_tm" -name '*.accession2taxid' | head -1)" \
+  --taxonmap "$_taxonmap" \
   --taxonnodes "$d_tn"/nodes.dmp \
   --db "$output" ||
   bailout 'generating diamond db failed'
