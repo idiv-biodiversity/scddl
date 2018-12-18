@@ -120,11 +120,9 @@ function run.log {
   local log=$1
   shift
 
-  "$@"
-  local ret=$?
+  echo "$*" > "$log"
 
-  [[ $ret -eq 0 ]] &&
-    echo "$*" > "$log"
+  "$@" |& tee -a "$log"
 
-  return $ret
+  return "${PIPESTATUS[0]}"
 }
