@@ -37,7 +37,7 @@ ARGUMENTS
                         example: /data/db
 
                         the data set will be put in:
-                        \$prefix/diamondncbi/\$dataset/\$(date +%F)
+                        \$prefix/diamond/\$dataset/\$(date +%F)
 
   in                    input reference data set
                         passed to diamond makedb --in
