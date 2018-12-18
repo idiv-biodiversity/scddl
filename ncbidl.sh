@@ -10,7 +10,7 @@ set \
 app=$(basename "$0" .sh)
 
 version=$(git describe --always --long --dirty 2> /dev/null) ||
-  version="0.1.0"
+  version="0.2.0"
 
 # get utilities
 # shellcheck source=util.sh
