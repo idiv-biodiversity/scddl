@@ -42,4 +42,4 @@ script:
   - >-
     bash ebidl.sh -v -p 2 /tmp/db
     pub/databases/gencode/Gencode_human/release_28/gencode.v28.metadata.Entrez
-  - tree /tmp/db
+  - tree -a /tmp/db

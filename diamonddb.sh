@@ -220,7 +220,7 @@ name=$(basename "$in")
 
 output_dir="$prefix"/diamond/"$name"/"$download_date"
 output="$output_dir/$name.dmnd"
-app_log="$output_dir/$app.log"
+app_log="$output_dir/.scddl.log"
 
 [[ -e $output ]] &&
   bailout 'output already exists, not overwriting'
