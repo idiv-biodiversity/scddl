@@ -29,7 +29,7 @@ USAGE
 
 DESCRIPTION
 
-  download ENSEMBL data set
+  download ENSEMBL prefix dataset
 
 ARGUMENTS
 
@@ -45,7 +45,7 @@ ARGUMENTS
   --                    ends option parsing
 
 OPTIONS
-
+  -g, --ensemblgenome   download from ensemblgenome instead of ensembl
   -p, --parallel cores  use \$cores parallel downloads,
                         default: number of cores available
 
@@ -74,6 +74,7 @@ tool.available lftp
 cores=$(grep -c ^processor /proc/cpuinfo)
 debug=no
 verbose=no
+dlsource="ensembl"
 
 for arg in "$@"
 do
@@ -88,6 +89,11 @@ do
       exit
       ;;
 
+    -g|--ensemblgenome)
+      dlsource="ensemblgenomes"
+      shift
+      ;;
+    
     -p|--parallel)
       shift
       cores=${1:?"parallel option has no argument"}
@@ -217,7 +223,7 @@ function download {
   [[ $verbose == yes ]] &&
     v=y
 
-  cat << EOF | lftp ftp://ftp.ensembl.org
+  cat << EOF | lftp ftp://ftp.$dlsource.org
 # bigger socket buffer, better I/O
 set net:socket-buffer 33554432
 
