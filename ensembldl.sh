@@ -29,7 +29,7 @@ USAGE
 
 DESCRIPTION
 
-  download ENSEMBL prefix dataset
+  download ENSEMBL data set
 
 ARGUMENTS
 
