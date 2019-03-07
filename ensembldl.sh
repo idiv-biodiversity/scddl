@@ -46,6 +46,7 @@ ARGUMENTS
 
 OPTIONS
 
+  -g, --ensemblgenome   download from ensemblgenome instead of ensembl
   -p, --parallel cores  use \$cores parallel downloads,
                         default: number of cores available
 
@@ -74,6 +75,7 @@ tool.available lftp
 cores=$(grep -c ^processor /proc/cpuinfo)
 debug=no
 verbose=no
+ensembl_server="ensembl"
 
 for arg in "$@"
 do
@@ -86,6 +88,11 @@ do
     --version)
       echo "$app $version"
       exit
+      ;;
+
+    -g|--ensemblgenome)
+      ensembl_server="ensemblgenomes"
+      shift
       ;;
 
     -p|--parallel)
@@ -217,7 +224,7 @@ function download {
   [[ $verbose == yes ]] &&
     v=y
 
-  cat << EOF | lftp ftp://ftp.ensembl.org
+  cat << EOF | lftp ftp://ftp.$ensembl_server.org
 # bigger socket buffer, better I/O
 set net:socket-buffer 33554432
 
@@ -242,7 +249,7 @@ EOF
 
 for dataset in "${datasets[@]}"
 do
-  output_basedir="$prefix/ensembl/$dataset"
+  output_basedir="$prefix/$ensembl_server/$dataset"
 
   output_dir="$output_basedir/$download_date"
 
