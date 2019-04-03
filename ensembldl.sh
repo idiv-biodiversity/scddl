@@ -223,7 +223,7 @@ function download {
   [[ $verbose == yes ]] &&
     v=y
 
-  cat << EOF | lftp ftp://ftp.$dlsource.org
+  cat << EOF | lftp sftp://ftp.$dlsource.org
 # bigger socket buffer, better I/O
 set net:socket-buffer 33554432
 
