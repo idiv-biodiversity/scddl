@@ -4,7 +4,6 @@ Scientific Computing Data Set Download
 **scddl** (pronounced **scuttle**) downloads data sets for scientific
 computing.
 
-[![Build Status](https://travis-ci.com/idiv-biodiversity/scddl.svg?branch=master)](https://travis-ci.com/idiv-biodiversity/scddl)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8f8c1bd0b2b84e57be194b3c55cd3e89)](https://www.codacy.com/app/idiv-biodiversity/scddl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=idiv-biodiversity/scddl&amp;utm_campaign=Badge_Grade)
 
 
