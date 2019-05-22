@@ -69,10 +69,9 @@ Goals and Features
 
 -   **logging to syslog**
 
-    When run non-interactively, i.e. as **cron jobs** or **systemd timers**,
-    the download tools send their output to **syslog** with their script name
-    as the tag, e.g. the tool **ncbidl.sh** would use **ncbidl** as tag. You
-    can then search for these tags, e.g.:
+    When specified, the download tools send their output to **syslog** with
+    their script name as the tag, e.g. the tool **ncbidl.sh** would use
+    **ncbidl** as tag. You can then search for these tags, e.g.:
 
     ```bash
     journalctl -t ncbidl

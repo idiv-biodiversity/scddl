@@ -1,40 +1,39 @@
 #!/usr/bin/env bash
 
 declare app
+declare color
+declare syslog
 declare verbose
 
-if [[ -t 0 ]]
-then
-  interactive=yes
-else
-  interactive=no
-fi
+function color.out {
+  if [[ $color == yes ]] || [[ $color == auto && -t 1 ]]
+  then
+    echo yes
+  else
+    echo no
+  fi
+}
 
-if [[ -t 1 ]]
-then
-  color_out=yes
-else
-  color_out=no
-fi
-
-if [[ -t 2 ]]
-then
-  color_err=yes
-else
-  color_err=no
-fi
+function color.err {
+  if [[ $color == yes ]] || [[ $color == auto && -t 2 ]]
+  then
+    echo yes
+  else
+    echo no
+  fi
+}
 
 function log.info {
-  if [[ $interactive == yes ]]
+  color_out=$(color.out)
+
+  if [[ $syslog == yes ]]
   then
-    if [[ $color_out == yes ]]
-    then
-      echo -e "\\e[1m$app: $*\\e[0m"
-    else
-      echo "$app: $*"
-    fi
-  else
     logger -p user.info -t "$app" "$@"
+  elif [[ $color_out == yes ]]
+  then
+    echo -e "\\e[1m$app: $*\\e[0m"
+  else
+    echo "$app: $*"
   fi
 }
 
@@ -46,30 +45,30 @@ function log.verbose {
 }
 
 function log.warning {
-  if [[ $interactive == yes ]]
+  color_err=$(color.err)
+
+  if [[ $syslog == yes ]]
   then
-    if [[ $color_err == yes ]]
-    then
-      echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
-    else
-      echo "$app: $*" >&2
-    fi
-  else
     logger -p user.warning -t "$app" "$@"
+  elif [[ $color_err == yes ]]
+  then
+    echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
+  else
+    echo "$app: $*" >&2
   fi
 }
 
 function log.error {
-  if [[ $interactive == yes ]]
+  color_err=$(color.err)
+
+  if [[ $syslog == yes ]]
   then
-    if [[ $color_err == yes ]]
-    then
-      echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
-    else
-      echo "$app: $*" >&2
-    fi
-  else
     logger -p user.err -t "$app" "$@"
+  elif [[ $color_err == yes ]]
+  then
+    echo -e "\\e[1m\\e[31m$app: $*\\e[0m" >&2
+  else
+    echo "$app: $*" >&2
   fi
 }
 

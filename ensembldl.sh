@@ -50,6 +50,15 @@ OPTIONS
   -p, --parallel cores  use \$cores parallel downloads,
                         default: number of cores available
 
+OUTPUT OPTIONS
+
+      --color[=WHEN]    whether to use colored output
+                        WHEN can be 'always', 'yes', 'never', 'no', or 'auto'
+
+      --syslog          write output to syslog, useful for cron jobs
+                        note: systemd timers usually do not need this because
+                        output is automatically sent to the journal
+
       --debug           output every command as it executes
   -v, --verbose         enables verbose output
   -q, --quiet           disables both debug and verbose
@@ -73,6 +82,8 @@ tool.available lftp
 # -----------------------------------------------------------------------------
 
 cores=$(grep -c ^processor /proc/cpuinfo)
+color=auto
+syslog=no
 debug=no
 verbose=no
 ensembl_server="ensembl"
@@ -109,6 +120,26 @@ do
       [[ $cores =~ ^[0-9]+$ ]] ||
         bailout "parallel option argument is not a number: $cores"
       ignore_next_arg=yes
+      shift
+      ;;
+
+    --color|--color=always|--color=yes)
+      color=yes
+      shift
+      ;;
+
+    --color=never|--color=no)
+      color=no
+      shift
+      ;;
+
+    --color=auto)
+      color=auto
+      shift
+      ;;
+
+    --syslog)
+      syslog=yes
       shift
       ;;
 
