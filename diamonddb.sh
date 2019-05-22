@@ -121,7 +121,7 @@ do
       ;;
 
     --debug=yes|--debug=no)
-      debug=${1##--debug=}
+      debug=${arg##--debug=}
       shift
       ;;
 
@@ -137,7 +137,7 @@ do
       ;;
 
     --verbose=yes|--verbose=no)
-      verbose=${1##--verbose=}
+      verbose=${arg##--verbose=}
       shift
       ;;
 
@@ -147,7 +147,7 @@ do
       ;;
 
     -*)
-      bailout "unrecognized option: $1"
+      bailout "unrecognized option: $arg"
       ;;
 
     *)
