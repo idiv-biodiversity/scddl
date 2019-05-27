@@ -13,8 +13,7 @@ version=$(git describe --always --long --dirty 2> /dev/null) ||
   version="0.3.0"
 
 # get utilities
-# shellcheck source=util.sh
-source "$(dirname "$0")"/util.sh
+source libscddl.sh
 
 # -----------------------------------------------------------------------------
 # usage

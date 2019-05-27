@@ -21,6 +21,7 @@ before_script:
   - mkdir /tmp/db
 
 script:
+  - make check
   - >-
     bash ncbidl.sh -v -p 2 /tmp/db
     blast/db/vector
