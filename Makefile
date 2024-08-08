@@ -11,6 +11,7 @@ SOURCES = \
 	ensembldl.sh \
 	ncbidl.sh \
 	ucscdl.sh \
+	uniprotdl.sh \
 	diamonddb.sh \
 
 CHECKS = \
