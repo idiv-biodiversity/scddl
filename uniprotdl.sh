@@ -212,10 +212,6 @@ versions:
 - $(lftp --version | head -1)
 
 EOF
-
-  md5sum_verbosity=""
-else
-  md5sum_verbosity="--quiet"
 fi
 
 # -----------------------------------------------------------------------------
