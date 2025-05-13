@@ -4,11 +4,29 @@ on: [pull_request]
 
 jobs:
 
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v5
+      -
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      -
+        run: pip install flake8 flake8-docstrings flake8-simplify flake8-unused-arguments flake8-quotes
+      -
+        uses: reviewdog/action-flake8@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
   shellcheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: reviewdog/action-shellcheck@v1
+      -
+        uses: actions/checkout@v5
+      -
+        uses: reviewdog/action-shellcheck@v1
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
