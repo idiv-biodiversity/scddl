@@ -1,5 +1,7 @@
 ---
 
+name: shellcheck
+
 on: [push]
 
 jobs:
