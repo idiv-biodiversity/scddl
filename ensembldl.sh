@@ -81,17 +81,9 @@ debug=no
 verbose=no
 ensembl_server="ensembl"
 
-ignore_next_arg=no
-
-for arg in "$@"
+while [[ -v 1 ]]
 do
-  if [[ $ignore_next_arg == yes ]]
-  then
-    ignore_next_arg=no
-    continue
-  fi
-
-  case "$arg" in
+  case "$1" in
     -\?|--help)
       usage
       exit
@@ -112,7 +104,6 @@ do
       cores=${1:?"parallel option has no argument"}
       [[ $cores =~ ^[0-9]+$ ]] ||
         bailout "parallel option argument is not a number: $cores"
-      ignore_next_arg=yes
       shift
       ;;
 
@@ -142,7 +133,7 @@ do
       ;;
 
     --debug=yes|--debug=no)
-      debug=${arg##--debug=}
+      debug=${1##--debug=}
       shift
       ;;
 
@@ -158,7 +149,7 @@ do
       ;;
 
     --verbose=yes|--verbose=no)
-      verbose=${arg##--verbose=}
+      verbose=${1##--verbose=}
       shift
       ;;
 
@@ -168,7 +159,7 @@ do
       ;;
 
     -*)
-      bailout "unrecognized option: $arg"
+      bailout "unrecognized option: $1"
       ;;
 
     *)
