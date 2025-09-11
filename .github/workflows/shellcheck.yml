@@ -2,7 +2,15 @@
 
 name: shellcheck
 
-on: [push]
+on:
+  pull_request:
+    paths:
+      - .github/workflows/shellcheck.yml
+      - '**.sh'
+  push:
+    paths:
+      - .github/workflows/shellcheck.yml
+      - '**.sh'
 
 jobs:
   shellcheck:
