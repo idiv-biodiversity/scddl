@@ -171,16 +171,21 @@ do
   esac
 done
 
-set +o nounset
+[[ -v 1 ]] || bailout 'missing argument: prefix'
 prefix=$1
-shift || bailout "missing argument: prefix"
+shift
+
+[[ -v 1 ]] || bailout 'missing argument: in'
 in=$1
-shift || bailout "missing argument: in"
+shift
+
+[[ -v 1 ]] || bailout 'missing argument: map'
 map=$1
-shift || bailout "missing argument: map"
+shift
+
+[[ -v 1 ]] || bailout 'missing argument: nodes'
 nodes=$1
-shift || bailout "missing argument: nodes"
-set -o nounset
+shift
 
 if [[ "$*" != "" ]]
 then

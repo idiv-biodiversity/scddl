@@ -161,10 +161,9 @@ do
   esac
 done
 
-set +o nounset
+[[ -v 1 ]] || bailout 'missing argument: prefix'
 prefix=$1
-shift || bailout "missing argument: prefix"
-set -o nounset
+shift
 
 shopt -s extglob
 # trim trailing slashes
