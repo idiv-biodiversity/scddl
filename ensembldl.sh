@@ -331,7 +331,7 @@ do
 
         awk \
           -v file="$file" \
-          '$3 == file { print $1, $2 }' \
+          '$4 == file { print $1, $2 }' \
           CHECKSUMS \
           >> $sum_remote
       done
